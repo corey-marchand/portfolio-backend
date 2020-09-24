@@ -5,7 +5,8 @@ from django.db import models
 class Portfolio(models.Model):
     name = models.CharField(max_length=64)
     email = models.EmailField(unique=True)
-    messsage = models.TextField(max_length=200)
+    company = models.TextField(max_length=150)
+    messsage = models.TextField(max_length=400)
 
     def __str__(self):
         return self.name
