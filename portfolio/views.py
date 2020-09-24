@@ -14,15 +14,3 @@ class PortfolioView(ListAPIView):
 class ContactCreate(CreateAPIView):
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
-
-# from myapp.forms import ContactForm
-# from django.views.generic.edit import FormView
-
-# class ContactView(FormView):
-#     template_name = 'contact.html'
-#     form_class = ContactForm
-#     success_url = ''
-
-#     def form_valid(self, form):
-#         form.send_email()
-#         return super().form_valid(form)
