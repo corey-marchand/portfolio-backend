@@ -11,17 +11,20 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_name.settings.local")
+import environ
+
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_name.settings.local")
 # os.environ.setdefault("DJANGO_SETTINGS_MODULE", __file__)
 # import django
 # django.setup()
 ############################   ENV     ############################################
-import environ
 
 env = environ.Env(
-    DEBUG=(bool, True),
-    ENVIORNMENT=(str, 'PRODUCTION'),
+  # set casting, default value
+  DEBUG=(bool, False),
+  ENVIRONMENT=(str, 'PRODUCTION'),
 )
+# env = os.environ.copy()
 
 #read env file
 environ.Env.read_env()
@@ -36,7 +39,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str('SECRET_KEY')
+# SECRET_KEY = env.str('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
@@ -58,7 +62,9 @@ INSTALLED_APPS = [
 
     # 3rd party
     'rest_framework',
+    # 'corsheaders',
     'corsheaders',
+
 
     # local
     'portfolio.apps.PortfolioConfig',
@@ -67,8 +73,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',        
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',      
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -102,15 +108,12 @@ WSGI_APPLICATION = 'portfolio_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),  # match to service in docker-compose
-        'PORT': env('DB_PORT'),
+        'NAME': env.str('DB_NAME'),
+        'USER': env.str('DB_USER'),
+        'PASSWORD': env.str('DB_PASSWORD'),
+        'HOST': env.str('DB_HOST'),  # match to service in docker-compose
+        'PORT': env.int('DB_PORT')
     }
 }
 
@@ -160,7 +163,7 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
-REST_FRAMEWORK = {
+# REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
@@ -168,33 +171,37 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     # ],
 
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
+    #     'rest_framework.authentication.BasicAuthentication',
+    # ]
     # 'DEFAULT_RENDERER_CLASSES': [
     #     'rest_framework.renderers.JSONRenderer',
     # ]
-}
+# }
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost",
+    "http://localhost:3000",
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 
 # CORS_ORIGIN_REGEX_WHITELIST = [
 
 #     r"^https://foodiejournals.\w+\com$",
 # ]
 
-# if ENVIRONMENT == 'production':
-#     SECURE_SSL_REDIRECT = True
-#     SECURE_HSTS_SECONDS = 3600
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#     SECURE_HSTS_PRELOAD = True
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
-#     SESSION_COOKIE_SECURE = True
-#     CSRF_COOKIE_SECURE = True
-#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+if ENVIRONMENT == 'production':
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# if ENV_ROLE == 'development':
+#     DEBUG = True
+#     TEMPLATE_DEBUG = DEBUG
