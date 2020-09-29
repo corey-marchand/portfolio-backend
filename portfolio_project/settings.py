@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import environ
+import warnings
 
 ############################   ENV     ############################################
 
@@ -124,6 +125,7 @@ DATABASES = {
 #     },
 # ]
 
+warnings.filterwarnings("ignore", message="No directory at", module="whitenoise.base" )
 
 # Internationalization
 
@@ -144,9 +146,9 @@ STATIC_URL = '/static/'
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     STATIC_DIR,
-# ]
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PERMISSION_CLASSES': [
